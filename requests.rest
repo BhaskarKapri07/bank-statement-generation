@@ -4,15 +4,7 @@ Content-Type: application/json
 {
   "userEmail": "bhaskar@example.com",
   "startDate": "2023-01-02",
-  "endDate": "2023-04-02"
+  "endDate": "2023-05-01"
 }
 
-### 
-POST http://localhost:3000/generate-statement
-Content-Type: application/json
 
-{
-  "userEmail": "bhaskar@example.com",
-  "startDate": "2023-01-01",
-  "endDate": "2023-01-01"
-}

@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const dbService = require("./database/dbService");
 const pdfService = require("./pdf-generator/pdfService");
+const emailService = require("./email-service/emailService");
 
 app.use(express.json());
 
@@ -27,13 +28,15 @@ app.post("/generate-statement", async (request, response) => {
 
     if (transactions.length === 0) {
       response.status(404).send("No transactions found for the given user");
+    } else {
+      const pdfPath = pdfService.generatePDF(transactions, userEmail);
+
+      await emailService.sendEmail(userEmail, pdfPath);
+
+      response.send("Statement generation and email sending process initiated");
     }
-
-    const pdfPath = pdfService.generatePDF(transactions, userEmail);
-
-    console.log("transactions: ", transactions);
   } catch (error) {
-    console.log("Error: ", error);
+    console.error("Error: ", error);
     response.status(500).send("Internal server error");
   }
 });
