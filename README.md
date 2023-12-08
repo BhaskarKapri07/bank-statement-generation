@@ -25,6 +25,12 @@ The services include:
 - **PDF Generation service :** Responsible for creating a PDF document of the transactions.
 - **Email service :** Handles sending the generated PDF to the user's email.
 
+You can start the server by using command:
+```bash
+node server.js
+```
+and then you can go to the `request.rest` file and click SEND REQUEST to send the request to `/generate-statement`.
+
 #### Details About Each Service:
 ##### API Service
 - It receives requests with two dates and a user email, and orchestrates the workflow by making requests to the other services.
