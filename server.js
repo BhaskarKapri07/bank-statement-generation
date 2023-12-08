@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const dbService = require("./database/dbService");
+const pdfService = require("./pdf-generator/pdfService");
 
 app.use(express.json());
 
@@ -27,6 +28,9 @@ app.post("/generate-statement", async (request, response) => {
     if (transactions.length === 0) {
       response.status(404).send("No transactions found for the given user");
     }
+
+    const pdfPath = pdfService.generatePDF(transactions, userEmail);
+
     console.log("transactions: ", transactions);
   } catch (error) {
     console.log("Error: ", error);
