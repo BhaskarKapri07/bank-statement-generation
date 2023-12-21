@@ -1,68 +1,48 @@
-# Bank Statement Assignment
-
-### Problem Statement
-As a developer, you are tasked with writing a set of services that will fulfill the following requirement: A user in our banking application will request a generation of a PDF file showing their transactions from date1 to date2.  
-  
-The following are the base required services:  
-- A basic API that accepts a period of time (two dates) and the user's email address ID.  
-- A database service that collects the relevant transactions  
-- A PDF generation service that takes in the above data and generates a PDF of the transaction list  
-- An email service that sends the above PDF to the user's email address as an attachment  
-
-### Assumptions Made
-- The database can just be a CSV file. So the database call can just be reading the file and filtering for the relevant info. Assume the CSV to contain the following columns: `user_email`, `date_of_transaction`, `amount`  
-- The PDF generated can just have one table or just lines of text, with each line a valid transaction for the requested period.  
-- You can use any web API framework to expose the trigger API (date + email POST data) and it can be not authenticated (we do not care about authentication for this task)  
-- Each service can be written in any language of choice. Or even in a single server, but:  
-- None of the above services must interact directly with each other. They must only do their function and must not interfere with the process of the other services.  
-
----
-### Solution
-The solution to the assignment was approached by developing four distinct microservices, each handling a specific part of the functionality. 
-The services include:
-- **API service :** The entry point for the application.
-- **Database service :** A CSV-based service for retrieving transaction data.
-- **PDF Generation service :** Responsible for creating a PDF document of the transactions.
-- **Email service :** Handles sending the generated PDF to the user's email.
-
-You can start the server by using command:
-```bash
-node server.js
-```
-and then you can go to the `request.rest` file and click SEND REQUEST to send the request to `/generate-statement`.
-
-#### Details About Each Service:
-##### API Service
-- It receives requests with two dates and a user email, and orchestrates the workflow by making requests to the other services.
-##### Database Service
-- It reads from a `transactions.csv` file and filters data based on the provided dates and user email.
-##### PDF Generation Service
-- It generates a PDF document from the transaction data received from the Database Service, using the `pdfkit` library.
-##### Email Service
-- It uses `nodemailer` library and sends the generated PDF as an email attachment to the specified user email.
-
-#### Database Handling
-Instead of a full-fledged database, a CSV file was used to simulate transaction data, which simplified the development process and focused on the core functionality of the services.
-#### Testing
-The testing was done using Visual Studio Code REST Client Extension. The `POST` request to `/generate-statement` was written in `requests.rest` file. This method enables quick and iterative testing, allowing immediate modifications and retesting as needed.
-#### Use of Ethereal Email for Testing Email Functionality
-Ethereal is a fake SMTP service, primarily used for testing purposes. It allows developers to test email sending functionality without sending actual emails to real recipients. This is particularly useful in development and staging environments where you don't want to spam real users with test emails. It doesn't require complex configurations. It's straightforward to integrate with `nodemailer` or similar email libraries in Node.js, making it an ideal choice for quickly setting up a test email environment.
-#### Languages/Libraries Used
-Everything was done using JavaScript ecosystem as it is extremely vast of libraries and tools, making it easy to find and integrate various packages needed for the tasks like PDF generation, handling CSV files, and sending emails.
-- **Express.js for API development** : Express.js is a minimal and flexible Node.js web application framework that provides a robust set of features for building APIs. Its simplicity makes it a popular choice for quickly setting up routes and handling HTTP requests.
-- **CSV-Parser for CSV File Handling** : A CSV file was chosen to simulate a database due to its simplicity and ease of use. No complex database setup was required, making it ideal for demonstrating the concept.
-- **PDFKit for PDF Generation** : PDFKit is a PDF generation library for Node.js, making it a natural fit for a JavaScript-based backend
-- **Nodemailer for Emailing** : Nodemailer is widely used for sending emails from Node.js applications. It's compatible with most email servers and has robust features for handling various emailing tasks.
 
 ---
 
-#### Bonus question: How would you go about adding authorization and authentication to this process?
-The authorization and authentication process can be added using JWT(JSON web token) and bcrypt.
+# Bank Statement Generator
 
-**Authentication Process**
-Whenever a new user signs up, they provide a username and password. `bcrypt` is used to  hash user passwords before storing them in your database. 
-When the user logins the provided password is hashed and compared with the stored hash to verify the user's identity. Upon successful login, a JWT token is generated and sent back to the user.
+## Overview
+The Bank Statement Generator is a versatile application designed for generating PDF bank statements over specified date ranges. This tool is ideal for users needing quick access to their transaction records in a convenient, digital format.
 
-**Authorization Process**
-The token verification and user identification happens each time the server receives a request that requires authentication. The server decodes and verifies the JWT. If valid, it extracts the user's information (e.g., user ID, roles). User information from the JWT is used to determine if the user is authorized to perform the requested action or access the requested data.
+## Features
+- **User-Friendly API**: Users can request bank statements by specifying a date range and their email address through a simple API.
+- **Efficient Data Retrieval**: Utilizes a CSV-based database service for quick and accurate transaction data retrieval.
+- **PDF Generation**: Capable of generating a well-structured PDF document listing all transactions within the requested period.
+- **Email Integration**: Seamlessly sends the generated PDF as an email attachment to the user, ensuring secure and prompt delivery.
 
+## Getting Started
+
+### Initial Setup
+Before using the application, you need to set up an Ethereal email account for testing email functionalities. Ethereal is a fake SMTP service, perfect for safely testing email sending in development environments.
+
+### Steps to Configure Ethereal:
+1. **Create Ethereal Account:** Go to [Ethereal](https://ethereal.email/) and create a new account. Upon creation, you will receive SMTP credentials.
+2. **Configure .env File:** In the root directory of the project, create a `.env` file and include the following lines, replacing `YOUR_ETHEREAL_USERNAME` and `YOUR_ETHEREAL_PASSWORD` with the credentials obtained from Ethereal:
+   ```
+   USER=YOUR_ETHEREAL_USERNAME
+   PASSWORD=YOUR_ETHEREAL_PASSWORD
+   ```
+3. **Run the Application:** Start the server with:
+   ```bash
+   node server.js
+   ```
+   You can then send a request to `/generate-statement` using the `request.rest` file.
+
+## Services
+- **API Service**: The API Service is the gateway through which users interact with the application. It efficiently processes requests and coordinates the flow of data between other services.
+- **Database Service**: This service handles the extraction and filtering of transaction data from the transactions.csv file. It's optimized for performance and accuracy, ensuring that the correct data is always retrieved.
+- **PDF Generation Service**: Leveraging the pdfkit library, this service is responsible for transforming raw transaction data into a professionally formatted PDF document. The attention to detail in layout and design ensures that the final output is both informative and aesthetically pleasing.
+- **Email Service**: Utilizing nodemailer, this service handles the crucial task of emailing the generated PDF to the user. The integration with Ethereal ensures that this process is smooth, secure, and reliable, especially during the testing phase.
+
+## Technical Details
+- **Simplified Database Handling**: The choice of a CSV file for database simulation simplifies data management, making it easy to modify and maintain the transaction records without needing complex database solutions.
+- **Efficient Testing Methodology**: The application employs the Visual Studio Code REST Client Extension for iterative and rapid testing. This method facilitates immediate feedback and adjustments, enhancing the development process.
+- **Secure Email Testing with Ethereal**: The use of Ethereal for email testing negates the risks associated with sending real emails, providing a safe environment for developers to test and refine the email functionality.
+
+## Technologies Employed
+- **Express.js**: Chosen for its efficiency and ease of use in API development, Express.js is the backbone of the application's server-side operations.
+- **CSV-Parser**: This library plays a pivotal role in managing CSV file operations, ensuring smooth data handling and retrieval.
+- **PDFKit**: A key component in generating high-quality PDF documents, PDFKit offers the flexibility and power needed for creating detailed and professional-looking bank statements.
+- **Nodemailer**: A staple in the Node.js ecosystem, Nodemailer is employed for its robust features and reliability in handling email operations, particularly in conjunction with Ethereal for testing purposes.
